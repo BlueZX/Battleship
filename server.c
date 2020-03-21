@@ -32,13 +32,15 @@ int main(){
     //printf(puerto);
 
     //Configuracion de Socket
-    int server_socket, client_socket[2];
+    int server_socket, client_socket;
     char buffer[1024];
     struct sockaddr_in server;
     struct sockaddr client;
 
     socklen_t client_size;
     int status;
+
+    pid_t id;
 
     //Preparando Socket
     server_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -62,45 +64,31 @@ int main(){
 
     printf("\x1b[32m%s\x1b[0m", "Esperando a los jugadores...\n\n");
 
-    for(int i=0;i<2;i++){
-        if(i == 1){
-            printf("\x1b[32m%s\x1b[0m", "Esperando al oponente...\n\n");
-        }
-
-        client_socket[i] = accept(server_socket, &client, &client_size);
-        //printf("%d",client_socket);
+    while(1) {
+        client_socket = accept(server_socket, &client, &client_size);
 
         if(client_socket < 0) {
             perror("accept");
         }
 
-        if(i == 0){
-            printf("\x1b[34m%s\x1b[0m", "Se ha conectado el primer jugador exitosamente!\n");
-        }else{
-            printf("\x1b[34m%s\x1b[0m", "Se ha conectado el segundo jugador exitosamente!\n");
+        printf("\x1b[34m%s\x1b[0m", "Se ha conectado un jugador \n");
+
+        if((id = fork()) == 0){
+            close(server_socket);
+
+            if( (status = recv(client_socket, buffer, 1024, 0)) == 0 ) { 
+                printf("\x1b[31m%s\x1b[0m", "Un jugador se ha desconectado \n");
+                exit(1);
+            }
+            else {
+                write(1, buffer, status);
+            }
+
         }
 
     }
 
-    printf("\x1b[32m%s\x1b[0m", "Los dos jugadores estan en linea\n");
 
-    while(1) {
-		if( (status = recv(client_socket[0], buffer, 1024, 0)) == 0 ) { 
-			printf("\x1b[31m%s\x1b[0m", "El primer jugador se ha desconectado\n");
-            printf("\x1b[31m%s\x1b[0m", "La sesión ha finalizado\n");
-			exit(1);
-		}else {
-			write(1, buffer, status);
-		}
-
-        if( (status = recv(client_socket[1], buffer, 1024, 0)) == 0 ) { 
-			printf("\x1b[31m%s\x1b[0m", "El segundo jugador se ha desconectado\n");
-            printf("\x1b[31m%s\x1b[0m", "La sesión ha finalizado\n");
-			exit(1);
-		}else {
-			write(1, buffer, status);
-		}
-	}
 
 
 
