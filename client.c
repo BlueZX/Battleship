@@ -24,19 +24,17 @@ int main(){
     printf("\x1b[33m%s\x1b[0m", "|  Version: 0.1                                     |\n");
     printf("\x1b[33m%s\x1b[0m", "|___________________________________________________|\n\n");
 
-    char ip[16];
+    char ip[15];
     printf("\x1b[34m%s\x1b[0m", "Ingresa la ip del servidor:");
-    fgets(ip, 16, stdin);
+    scanf("%s", ip);
 
-    char p[5];
-    printf("\x1b[34m%s\x1b[0m", "Ingresa el puerto del servidor:");
-    fgets(p, 5, stdin);
     int puerto;
-    sscanf(p, "%d", &puerto);
+    printf("\x1b[34m%s\x1b[0m", "Ingresa el puerto del servidor:");
+    scanf("%d", &puerto);
 
-    char nickname[30];
+    char nick[30];
     printf("\x1b[32m%s\x1b[0m", "Ingresa tu nickname:");
-    fgets(nickname, 30, stdin);
+    scanf("%s", nick);
 
     int server_socket, msg;
     char buffer[1024];
@@ -53,7 +51,7 @@ int main(){
         exit(1);
     }
 
-    printf("\x1b[34m%s\x1b[0m", "has ingresado a la sala!\n");
+    printf("\x1b[34m%s\x1b[0m", "has ingresado a la sala!\n\n");
 
     while(1){
         msg = read(0, buffer, 1024);

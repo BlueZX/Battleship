@@ -23,13 +23,11 @@ int main(){
     printf("\x1b[33m%s\x1b[0m", "|                                           |_|                                       |\n");
     printf("\x1b[33m%s\x1b[0m", "|_____________________________________________________________________________________|\n\n");
 
-    char p[5];
     char player_one[30], player_two[30];
 
-    printf("\x1b[34m%s\x1b[0m", "Ingresa el puerto a utilizar:");
-    fgets(p, 5, stdin);
     int puerto;
-    sscanf(p, "%d", &puerto);
+    printf("\x1b[34m%s\x1b[0m", "Ingresa el puerto a utilizar:");
+    scanf("%d", &puerto);
     
     //printf(puerto);
 
