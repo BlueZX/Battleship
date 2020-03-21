@@ -34,7 +34,7 @@ int main(){
     //printf(puerto);
 
     //Configuracion de Socket
-    int server_socket, client_socket;
+    int server_socket, client_socket[2];
     char buffer[1024];
     struct sockaddr_in server;
     struct sockaddr client;
@@ -64,20 +64,43 @@ int main(){
 
     printf("\x1b[32m%s\x1b[0m", "Esperando a los jugadores...\n\n");
 
-    client_socket = accept(server_socket, &client, &client_size);
+    for(int i=0;i<2;i++){
+        if(i == 1){
+            printf("\x1b[32m%s\x1b[0m", "Esperando al oponente...\n\n");
+        }
 
-    if(client_socket < 0) {
-		perror("accept");
-	}
+        client_socket[i] = accept(server_socket, &client, &client_size);
+        //printf("%d",client_socket);
 
-    printf("\x1b[34m%s\x1b[0m", "Se ha conectado un jugador exitosamente!");
+        if(client_socket < 0) {
+            perror("accept");
+        }
+
+        if(i == 0){
+            printf("\x1b[34m%s\x1b[0m", "Se ha conectado el primer jugador exitosamente!\n");
+        }else{
+            printf("\x1b[34m%s\x1b[0m", "Se ha conectado el segundo jugador exitosamente!\n");
+        }
+
+    }
+
+    printf("\x1b[32m%s\x1b[0m", "Los dos jugadores estan en linea\n");
 
     while(1) {
-		if( (status = recv(client_socket, buffer, 1024, 0)) == 0 ) { // recv se encarga de recibir mensajes desde algún cliente, almacenando de una cadena de caracteres
-			perror("MSG: Error al recibir mensaje");
-			return -1;
+		if( (status = recv(client_socket[0], buffer, 1024, 0)) == 0 ) { 
+			printf("\x1b[31m%s\x1b[0m", "El primer jugador se ha desconectado\n");
+            printf("\x1b[31m%s\x1b[0m", "La sesión ha finalizado\n");
+			exit(1);
 		}else {
-			write(1, buffer, status); // Lo escribe por pantalla
+			write(1, buffer, status);
+		}
+
+        if( (status = recv(client_socket[1], buffer, 1024, 0)) == 0 ) { 
+			printf("\x1b[31m%s\x1b[0m", "El segundo jugador se ha desconectado\n");
+            printf("\x1b[31m%s\x1b[0m", "La sesión ha finalizado\n");
+			exit(1);
+		}else {
+			write(1, buffer, status);
 		}
 	}
 

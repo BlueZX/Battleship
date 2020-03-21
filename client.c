@@ -38,7 +38,7 @@ int main(){
     printf("\x1b[32m%s\x1b[0m", "Ingresa tu nickname:");
     fgets(nickname, 30, stdin);
 
-    int server_socket;
+    int server_socket, msg;
     char buffer[1024];
     struct sockaddr_in server;
 
@@ -53,7 +53,17 @@ int main(){
         exit(1);
     }
 
-    printf("\x1b[34m%s\x1b[0m", "has ingresado a la sala!");
+    printf("\x1b[34m%s\x1b[0m", "has ingresado a la sala!\n");
+
+    while(1){
+        msg = read(0, buffer, 1024);
+
+        if(send(server_socket, buffer, msg, 0) == -1){
+            printf("\x1b[31m%s\x1b[0m", "Se ha perdido la conexión\n");
+            printf("\x1b[31m%s\x1b[0m", "La partida ha finalizado\n");
+			exit(1);
+        }
+    }
 
     return 0;
 }
